@@ -232,7 +232,7 @@ class Workplace extends Component {
     if (userInfo.punch) {
       Modal.success({
         title: '您正在打卡中',
-        content: `本次已打卡${'3.2h'}`,
+        content: `本次已打卡${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`,
       });
     } else
       dispatch({
@@ -281,6 +281,11 @@ class Workplace extends Component {
       );
     let pageRankStudents = rankUsers.slice(curPage * pageSize - pageSize, curPage * pageSize);
     console.log(pageRankStudents);
+    // let time = '2019-10-17 18:23'
+    // let interval = moment(time)
+    // let now = moment()
+    // console.log(now.diff(time))
+
     const headStatus = (
       <span>
         <span>状态 : </span>
@@ -377,7 +382,7 @@ class Workplace extends Component {
                         <Badge status={userInfo.punch ? 'processing' : 'default'}></Badge>
                         {userInfo.punch ? '打卡中' : '未打卡'}
                       </Descriptions.Item>
-                      <Descriptions.Item label="本次已打卡">3h 30min</Descriptions.Item>
+                      <Descriptions.Item label="本次已打卡">{`${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`}</Descriptions.Item>
                     </Descriptions>
                     <Button style={{ marginLeft: 15, marginTop: 15 }} onClick={this.endPunch}>
                       停止打卡

@@ -1,5 +1,6 @@
 import { reqRegister } from './service';
 import {message} from 'antd'
+import { routerRedux } from 'dva/router';
 
 const Model = {
   namespace: 'userRegister',
@@ -11,7 +12,7 @@ const Model = {
       const response = yield call(reqRegister, payload);
       if(response.status==='success'){
         message.success('注册成功！')
-        window.location.href = '/user/login'
+        yield put(routerRedux.replace('/user/login'));
       }else{
         message.error('注册失败')
       }
