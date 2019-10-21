@@ -12,3 +12,9 @@ export async function queryCity(province) {
 export async function query() {
   return request('/api/users');
 }
+export async function reqUpdateStuInfo(params) {
+  return request('/updateStudentInfo', {
+    method: 'post',
+    data: params,
+  });
+}

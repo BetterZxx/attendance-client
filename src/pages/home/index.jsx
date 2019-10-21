@@ -16,23 +16,15 @@ import {
   Modal,
 } from 'antd';
 import React, { Component } from 'react';
-import Link from 'umi/link';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
-import moment from 'moment';
-import Radar from './components/Radar';
-import EditableLinkGroup from './components/EditableLinkGroup';
-import ReactPlayer from 'react-player';
-import { saveAs } from 'file-saver';
-import { Player } from 'video-react';
-import aaa from '../../assets/aaa.jpg';
-import wolf from '../../assets/wolf.jpg';
 import '../../../node_modules/video-react/dist/video-react.css';
 import styles from './style.less';
 //import { thisExpression } from '@babel/types';
 //import e from 'express';
 
-const pageSize = 3;
+const pageSize = 8;
+const { confirm } = Modal;
 
 const PageHeaderContent = ({ currentUser }) => {
   const loading = currentUser && Object.keys(currentUser).length;
@@ -52,7 +44,7 @@ const PageHeaderContent = ({ currentUser }) => {
   return (
     <div className={styles.pageHeaderContent}>
       <div className={styles.avatar}>
-        <Avatar size="large" src={currentUser.photo} />
+        <Avatar size="large" src={currentUser.avatar} />
       </div>
       <div className={styles.content}>
         <div className={styles.contentTitle}>
@@ -61,7 +53,7 @@ const PageHeaderContent = ({ currentUser }) => {
           ，祝你开心每一天！
         </div>
         <div>
-          大家好，我叫佩奇
+          大家好，我叫{currentUser.name}
           {/* {currentUser.title} |{currentUser.group} */}
         </div>
       </div>
@@ -70,15 +62,8 @@ const PageHeaderContent = ({ currentUser }) => {
 };
 
 @connect(({ user: { userInfo, rankUsers } }) => ({
-  // currentUser,
   userInfo,
   rankUsers,
-  // projectNotice,
-  // activities,
-  // radarData,
-  // currentUserLoading: loading.effects['dashboardWorkplace/fetchUserCurrent'],
-  // projectLoading: loading.effects['dashboardWorkplace/fetchProjectNotice'],
-  //activitiesLoading: loading.effects['dashboardWorkplace/fetchActivitiesList'],
 }))
 class Workplace extends Component {
   constructor(props) {
@@ -93,16 +78,10 @@ class Workplace extends Component {
   }
   componentDidMount() {
     const { dispatch } = this.props;
-    // dispatch({
-    //   type: 'dashboardWorkplace/init',
-    // });
   }
 
   componentWillUnmount() {
     const { dispatch } = this.props;
-    // dispatch({
-    //   type: 'dashboardWorkplace/clear',
-    // });
   }
   ListContent = user => (
     <div className={styles.listContent}>
@@ -162,61 +141,7 @@ class Workplace extends Component {
       </List.Item>
     );
   };
-  openCamera = () => {
-    let constraints = {
-      video: { width: 600, height: 400 },
-      audio: true,
-    };
-    let successCb = MediaStream => {
-      console.log(MediaStream);
-      this.setState({ img: aaa }, () => {
-        setTimeout(() => {
-          this.setState({ MediaStream });
-        }, 50);
-      });
-    };
-    ////////////////////////////////
-    if (navigator.mediaDevices === undefined) {
-      navigator.mediaDevices = {};
-    }
 
-    // 一些浏览器部分支持 mediaDevices。我们不能直接给对象设置 getUserMedia
-    // 因为这样可能会覆盖已有的属性。这里我们只会在没有getUserMedia属性的时候添加它。
-    if (navigator.mediaDevices.getUserMedia === undefined) {
-      navigator.mediaDevices.getUserMedia = function(constraints) {
-        // 首先，如果有getUserMedia的话，就获得它
-        var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-        // 一些浏览器根本没实现它 - 那么就返回一个error到promise的reject来保持一个统一的接口
-        if (!getUserMedia) {
-          return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-        }
-
-        // 否则，为老的navigator.getUserMedia方法包裹一个Promise
-        return new Promise(function(resolve, reject) {
-          getUserMedia.call(navigator, constraints, resolve, reject);
-        });
-      };
-    }
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(successCb)
-      .catch(function(err) {
-        console.log(err.name + ': ' + err.message);
-      });
-  };
-  captureImg = () => {
-    let player = document.getElementById('player').childNodes[0];
-
-    let c = document.createElement('canvas');
-    c.width = 600;
-    c.height = 400;
-    var cxt = c.getContext('2d');
-    cxt.drawImage(player, 0, 0, 600, 400);
-    c.toBlob(blob => {
-      saveAs(blob, 'test.png');
-    }, 'image/png');
-  };
   handleGradeStatusChange = e => {
     this.setState({
       gradeStatus: e.target.value,
@@ -236,7 +161,7 @@ class Workplace extends Component {
       });
     } else
       dispatch({
-        type: 'dashboardWorkplace/startPunch',
+        type: 'home/startPunch',
         payload: { studentID: userInfo.studentID },
       });
   };
@@ -248,11 +173,28 @@ class Workplace extends Component {
         title: `${userInfo.name}未开始打卡！`,
         content: '请先开始打卡',
       });
-    } else
+    } else if (userInfo.unfinishTime.h * 60 + userInfo.unfinishTime.m < 30) {
+      confirm({
+        title: '你本次打卡未达到30分钟，确认结束?',
+        content: '结束打卡本次记录将无效',
+        cancelText: '取消',
+        okText: '确定',
+        onOk() {
+          dispatch({
+            type: 'home/endPunch',
+            payload: { studentID: userInfo.studentID },
+          });
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+    } else {
       dispatch({
-        type: 'dashboardWorkplace/endPunch',
+        type: 'home/endPunch',
         payload: { studentID: userInfo.studentID },
       });
+    }
   };
   handleChangePage = page => {
     this.setState({
@@ -260,14 +202,7 @@ class Workplace extends Component {
     });
   };
   render() {
-    const {
-      //projectNotice,
-      //projectLoading,
-      //activitiesLoading,
-      // radarData,
-      userInfo,
-      rankUsers,
-    } = this.props;
+    const { userInfo, rankUsers } = this.props;
     const { gradeStatus, punchStatus, curPage } = this.state;
     let rankStudents = rankUsers
       .filter(item => {
@@ -281,10 +216,6 @@ class Workplace extends Component {
       );
     let pageRankStudents = rankUsers.slice(curPage * pageSize - pageSize, curPage * pageSize);
     console.log(pageRankStudents);
-    // let time = '2019-10-17 18:23'
-    // let interval = moment(time)
-    // let now = moment()
-    // console.log(now.diff(time))
 
     const headStatus = (
       <span>
@@ -327,70 +258,6 @@ class Workplace extends Component {
       >
         <Row gutter={24}>
           <Col xl={16} lg={24} md={24} sm={24} xs={24}>
-            <Card
-              className={styles.projectList}
-              style={{
-                marginBottom: 24,
-              }}
-              title="狼眼识别"
-              bordered={false}
-              bodyStyle={{
-                padding: 0,
-              }}
-            >
-              <Row>
-                <Col span={16}>
-                  <div
-                    style={{
-                      background: `url(${this.state.img}) no-repeat`,
-                      backgroundSize: '535px 360px',
-                      backgroundColor: '#eee',
-                    }}
-                  >
-                    <ReactPlayer
-                      id="player"
-                      width="1"
-                      playing={true}
-                      url={this.state.MediaStream}
-                    ></ReactPlayer>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div>
-                    <Row type="flex" justify="space-around" style={{ marginTop: 20 }}>
-                      <Col span={12} style={{ textAlign: 'center' }}>
-                        <Button onClick={this.openCamera} type="primary">
-                          启动摄像头
-                        </Button>
-                      </Col>
-                      <Col span={12} style={{ textAlign: 'center' }}>
-                        <Button onClick={this.startPunch} type="primary">
-                          开始打卡
-                        </Button>
-                      </Col>
-                    </Row>
-
-                    <Descriptions column={1} style={{ marginTop: 20, marginLeft: 15 }}>
-                      <Descriptions.Item label="本周打卡">
-                        <Statistic value={userInfo.weekTime} suffix="h" />
-                      </Descriptions.Item>
-                      <Descriptions.Item label="今日打卡">{userInfo.todayTime}h</Descriptions.Item>
-                      <Descriptions.Item label="剩余打卡时间">
-                        {userInfo.weekLeftTime}h
-                      </Descriptions.Item>
-                      <Descriptions.Item label="状态">
-                        <Badge status={userInfo.punch ? 'processing' : 'default'}></Badge>
-                        {userInfo.punch ? '打卡中' : '未打卡'}
-                      </Descriptions.Item>
-                      <Descriptions.Item label="本次已打卡">{`${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`}</Descriptions.Item>
-                    </Descriptions>
-                    <Button style={{ marginLeft: 15, marginTop: 15 }} onClick={this.endPunch}>
-                      停止打卡
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
-            </Card>
             <Card
               bodyStyle={{
                 padding: 0,
@@ -457,13 +324,39 @@ class Workplace extends Component {
               style={{
                 marginBottom: 24,
               }}
-              title="快速开始 / 便捷导航"
+              title="打卡面板"
               bordered={false}
               bodyStyle={{
                 padding: 0,
               }}
             >
-              {/* <EditableLinkGroup onAdd={() => {}} links={links} linkElement={Link} /> */}
+              <div>
+                <Button
+                  style={{ margin: '15px 0 12px 22px' }}
+                  onClick={this.startPunch}
+                  type="primary"
+                >
+                  开始打卡
+                </Button>
+                <Button style={{ marginLeft: 15, marginTop: 15 }} onClick={this.endPunch}>
+                  停止打卡
+                </Button>
+
+                <Descriptions column={2} style={{ marginLeft: 22 }}>
+                  <Descriptions.Item label="本周打卡">
+                    <Statistic value={userInfo.weekTime} suffix="h" />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="今日打卡">{userInfo.todayTime}h</Descriptions.Item>
+                  <Descriptions.Item label="剩余打卡时间">
+                    {userInfo.weekLeftTime}h
+                  </Descriptions.Item>
+                  <Descriptions.Item label="状态">
+                    <Badge status={userInfo.punch ? 'processing' : 'default'}></Badge>
+                    {userInfo.punch ? '打卡中' : '未打卡'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="本次已打卡">{`${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`}</Descriptions.Item>
+                </Descriptions>
+              </div>
             </Card>
             <Card
               style={{
@@ -472,9 +365,7 @@ class Workplace extends Component {
               bordered={false}
               title="公告"
             >
-              <div className={styles.chart}>
-                {/* <Radar hasLegend height={343} data={radarData} /> */}
-              </div>
+              <div className={styles.chart}></div>
             </Card>
             <Card
               bodyStyle={{
@@ -485,16 +376,7 @@ class Workplace extends Component {
               title="团队"
             >
               <div className={styles.members}>
-                <Row gutter={48}>
-                  {/* {projectNotice.map(item => (
-                    <Col span={12} key={`members-item-${item.id}`}>
-                      <Link to={item.href}>
-                        <Avatar src={item.logo} size="small" />
-                        <span className={styles.member}>{item.member}</span>
-                      </Link>
-                    </Col>
-                  ))} */}
-                </Row>
+                <Row gutter={48}></Row>
               </div>
             </Card>
           </Col>

@@ -38,10 +38,10 @@ const UserLayout = props => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>狼眼考勤</span>
+                <span className={styles.title}>乐程考勤</span>
               </Link>
             </div>
-            <div className={styles.desc}>狼眼考勤 用数据改变未来</div>
+            <div className={styles.desc}>乐程考勤 用数据改变未来</div>
           </div>
           {children}
         </div>

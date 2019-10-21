@@ -3,15 +3,19 @@ import { GridContent } from '@ant-design/pro-layout';
 import { Menu } from 'antd';
 import { connect } from 'dva';
 import BaseView from './components/base';
-import BindingView from './components/binding';
-import NotificationView from './components/notification';
-import SecurityView from './components/security';
+// import BindingView from './components/binding';
+// import NotificationView from './components/notification';
+// import SecurityView from './components/security';
 import styles from './style.less';
 
 const { Item } = Menu;
-
+const Working = ()=>(
+  <div>
+    开发中。。。
+  </div>
+)
 @connect(({ accountSettings }) => ({
-  currentUser: accountSettings.currentUser,
+ //currentUser: accountSettings.currentUser,
 }))
 class Settings extends Component {
   main = undefined;
@@ -33,9 +37,9 @@ class Settings extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'accountSettings/fetchCurrent',
-    });
+    // dispatch({
+    //   type: 'accountSettings/fetchCurrent',
+    // });
     window.addEventListener('resize', this.resize);
     this.resize();
   }
@@ -93,15 +97,16 @@ class Settings extends Component {
     switch (selectKey) {
       case 'base':
         return <BaseView />;
-
       case 'security':
-        return <SecurityView />;
-
+       // return <SecurityView />;
+       return <Working/>
       case 'binding':
-        return <BindingView />;
+        //return <BindingView />;
+        return <Working/>
 
       case 'notification':
-        return <NotificationView />;
+       // return <NotificationView />;
+       return <Working/>
 
       default:
         break;
@@ -111,12 +116,6 @@ class Settings extends Component {
   };
 
   render() {
-    const { currentUser } = this.props;
-
-    if (!currentUser.userid) {
-      return '';
-    }
-
     const { mode, selectKey } = this.state;
     return (
       <GridContent>

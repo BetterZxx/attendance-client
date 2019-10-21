@@ -290,24 +290,9 @@ class Register extends Component {
             })(<Input size="large" type="password" placeholder="确认密码" />)}
           </FormItem>
           
-          <FormItem>
-            <Row gutter={8}>
-              <Col span={16}>
-              <Upload {...props}>
-                <Button>
-                  <Icon type="upload" /> 上传照片
-                </Button>
-              </Upload>,
-                {/* {getFieldDecorator('captcha', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入验证码！',
-                    },
-                  ],
-                })(<Input size="large" placeholder="验证码" />)} */}
-              </Col>
-              <Col span={8}>
+          <FormItem >
+            
+              
               {getFieldDecorator('sex', {
                   rules: [
                     {
@@ -319,8 +304,7 @@ class Register extends Component {
                   <Radio value='1'>男</Radio>
                   <Radio value='0'>女</Radio>
                 </Radio.Group>)}
-              </Col>
-            </Row>
+              
           </FormItem>
           <FormItem>
             <Button

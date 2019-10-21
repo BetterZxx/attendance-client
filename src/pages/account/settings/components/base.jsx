@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select, Upload, message } from 'antd';
+import { Button, Form, Input, Select, Upload, message,Radio } from 'antd';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import GeographicView from './GeographicView';
@@ -50,15 +50,15 @@ const validatorPhone = (rule, value, callback) => {
   callback();
 };
 
-@connect(({ accountSettings,user:{userInfo} }) => ({
-  currentUser: accountSettings.currentUser,
+@connect(({ user:{userInfo} }) => ({
+  
   userInfo
 }))
 class BaseView extends Component {
   view = undefined;
 
   componentDidMount() {
-    this.setBaseInfo();
+   // this.setBaseInfo();
   }
 
   setBaseInfo = () => {
@@ -94,10 +94,18 @@ class BaseView extends Component {
 
   handlerSubmit = event => {
     event.preventDefault();
-    const { form } = this.props;
-    form.validateFields(err => {
+    const { form,userInfo,dispatch } = this.props;
+    form.validateFields((err,values) => {
       if (!err) {
-        message.success('更新基本信息成功');
+        console.log(values)
+        const payload = {
+          ...userInfo,...values,createTime:''
+        }
+        dispatch({
+          type:'accountSettings/updateUserInfo',
+          payload
+        })
+       // message.success('更新基本信息成功');
       }
     });
   };
@@ -105,7 +113,7 @@ class BaseView extends Component {
   render() {
     const {
       form: { getFieldDecorator },
-      userInfo
+      userInfo,
     } = this.props;
     return (
       <div className={styles.baseView} ref={this.getViewDom}>
@@ -118,92 +126,98 @@ class BaseView extends Component {
                     required: true,
                     message: '请输入您的姓名!',
                   },
-                
                 ],
-                initialValue:userInfo.name
+                initialValue:typeof userInfo==='undefined'?'':userInfo.name
               })(<Input />)}
             </FormItem>
             <FormItem label="学号">
-              {getFieldDecorator('name', {
+              {getFieldDecorator('studentID', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入您的昵称!',
+                    message: '请输入您的学号!',
                   },
                 ],
+                initialValue:userInfo.studentID
               })(<Input />)}
             </FormItem>
-            <FormItem label="个人简介">
-              {getFieldDecorator('profile', {
+            <FormItem label="性别">
+              {getFieldDecorator('sex', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入个人简介!',
+                    message: '请!',
                   },
                 ],
-              })(<Input.TextArea placeholder="个人简介" rows={4} />)}
-            </FormItem>
-            <FormItem label="国家/地区">
-              {getFieldDecorator('country', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入您的国家或地区!',
-                  },
-                ],
+                initialValue:userInfo.sex+''
               })(
-                <Select
-                  style={{
-                    maxWidth: 220,
-                  }}
-                >
-                  <Option value="China">中国</Option>
-                </Select>,
+                <Radio.Group>
+                  <Radio value="1">男</Radio>
+                  <Radio value="0">女</Radio>
+                </Radio.Group>
+                
               )}
             </FormItem>
-            <FormItem label="所在省市">
-              {getFieldDecorator('geographic', {
+            <FormItem label="密码">
+              {getFieldDecorator('password', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入您的所在省市!',
-                  },
-                  {
-                    validator: validatorGeographic,
+                    message: '请输入您的密码!',
+                    
                   },
                 ],
-              })(<GeographicView />)}
+              })(<Input type="password" />)}
             </FormItem>
-            <FormItem label="街道地址">
-              {getFieldDecorator('address', {
+            <FormItem label="确认密码">
+              {getFieldDecorator('confirmPassword', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入您的街道地址!',
+                    message: '请确认你的密码!',
                   },
+                  {
+                    validator:(rule,value,callback)=>{
+                      const { getFieldValue } = this.props.form
+                        if (value && value !== getFieldValue('password')) {
+                            callback('两次输入不一致！')
+                        }
+                        callback()
+
+                    }
+                  },
+                  
                 ],
-              })(<Input />)}
+              
+              })(<Input type="password"/>)}
             </FormItem>
-            <FormItem label="联系电话">
-              {getFieldDecorator('phone', {
+            
+            <FormItem label="年级">
+              {getFieldDecorator('grade', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入您的联系电话!',
-                  },
-                  {
-                    validator: validatorPhone,
+                    message: '请输入年级!',
                   },
                 ],
-              })(<PhoneView />)}
+                initialValue:userInfo.grade+''
+              })(
+                <Select>
+                  <Option value='2017'>2017级</Option>
+                  <Option value='2018'>2018级</Option>
+                  <Option value='2019'>2019级</Option>
+                  <Option value='2020'>2020级</Option>
+                </Select>
+              )}
             </FormItem>
+           
             <Button type="primary" onClick={this.handlerSubmit}>
               更新基本信息
             </Button>
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={this.getAvatarURL()} />
+          <AvatarView avatar={userInfo.photo} />
         </div>
       </div>
     );

@@ -10,7 +10,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: '狼眼考勤系统',
+  title: '乐程考勤系统',
   pwa: false,
   iconfontUrl: '',
 };

@@ -1,4 +1,5 @@
-import { queryCity, queryCurrent, queryProvince, query as queryUsers } from './service';
+import { queryCity, queryCurrent, queryProvince, query as queryUsers,reqUpdateStuInfo } from './service';
+import { message } from 'antd';
 
 const Model = {
   namespace: 'accountSettings',
@@ -15,6 +16,18 @@ const Model = {
         type: 'save',
         payload: response,
       });
+    },
+    *updateUserInfo({payload},{call,put}){
+      const res = yield call(reqUpdateStuInfo,payload);
+      if(res.status==='success'){
+        message.success('更新基本信息成功')
+        yield put({
+          type:'user/getUsersInfo',
+        })
+
+      }else{
+        message.error('更新基本信息失败')
+      }
     },
 
     *fetchCurrent(_, { call, put }) {
