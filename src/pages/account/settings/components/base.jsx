@@ -217,7 +217,7 @@ class BaseView extends Component {
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={userInfo.photo} />
+          <AvatarView avatar={userInfo.avatar} />
         </div>
       </div>
     );

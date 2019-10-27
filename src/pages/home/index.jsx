@@ -9,7 +9,6 @@ import {
   Button,
   Progress,
   Badge,
-  Pagination,
   Radio,
   Icon,
   Descriptions,
@@ -20,10 +19,6 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import '../../../node_modules/video-react/dist/video-react.css';
 import styles from './style.less';
-//import { thisExpression } from '@babel/types';
-//import e from 'express';
-
-const pageSize = 8;
 const { confirm } = Modal;
 
 const PageHeaderContent = ({ currentUser }) => {
@@ -118,7 +113,7 @@ class Workplace extends Component {
       <List.Item key={index}>
         <Row style={{ width: '100%' }}>
           <Col style={{ textAlign: 'center', height: '100%' }} span={1}>
-            <span style={{ fontSize: 17 }}>{index + 1}</span>
+            <span style={{ fontSize: 17 }}>{item.rank}</span>
           </Col>
           <Col span={6}>
             <List.Item.Meta
@@ -204,7 +199,7 @@ class Workplace extends Component {
   render() {
     const { userInfo, rankUsers } = this.props;
     const { gradeStatus, punchStatus, curPage } = this.state;
-    let rankStudents = rankUsers
+    let filterStudents = rankUsers
       .filter(item => {
         return gradeStatus === 0 || userInfo.grade === item.grade;
       })
@@ -213,10 +208,12 @@ class Workplace extends Component {
           punchStatus === 2 ||
           (punchStatus === 1 && item.punch) ||
           (punchStatus === 0 && !item.punch),
-      );
-    let pageRankStudents = rankUsers.slice(curPage * pageSize - pageSize, curPage * pageSize);
-    console.log(pageRankStudents);
-
+      ).map((item,index)=>{
+        return {...item,rank:index+1}
+      })
+      let rankedUsers = rankUsers.map((item,index)=>{
+        return {...item,rank:index+1}
+      })
     const headStatus = (
       <span>
         <span>状态 : </span>
@@ -298,24 +295,18 @@ class Workplace extends Component {
               <List
                 renderItem={(item, index) => this.renderActivities(item, index)}
                 dataSource={
-                  gradeStatus === 0 && punchStatus === 2 ? pageRankStudents : rankStudents
+                  gradeStatus === 0 && punchStatus === 2 ? rankedUsers : filterStudents
                 }
                 className={styles.activitiesList}
                 size="large"
-                footer={
-                  gradeStatus === 0 && punchStatus === 2 ? (
-                    <Pagination
-                      pageSize={pageSize}
-                      current={this.state.curPage}
-                      onChange={this.handleChangePage}
-                      style={{ textAlign: 'right' }}
-                      size="small"
-                      total={rankUsers.length}
-                    />
-                  ) : (
-                    ''
-                  )
-                }
+                pagination={{
+                  onChange: page => {
+                    console.log(page);
+                  },
+                  size:'small',
+                  pageSize: 8,
+                }}
+                
               />
             </Card>
           </Col>
