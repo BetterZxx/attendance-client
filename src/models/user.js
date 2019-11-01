@@ -41,14 +41,15 @@ const UserModel = {
       };
       if (unfinishTime !== 0) {
         try {
-          interval.h = Math.floor(moment().diff(moment(unfinishTime)) / 1000 / 60 / 60);
-          interval.m = Math.floor((moment().diff(moment(unfinishTime)) / 1000 / 60) % 60);
+          interval.h = Math.floor(moment().diff(moment(+unfinishTime)) / 1000 / 60 / 60);
+          interval.m = Math.floor((moment().diff(moment(+unfinishTime)) / 1000 / 60) % 60);
         } catch (err) {
           console.log(err);
         }
-
+        
         console.log(interval);
       }
+      console.log('ddddddddd',moment(+unfinishTime).format('YYYY-MM-DD HH:mm'))
       let stu = indexStudents.find((item, index) => {
         return student.name === item.name;
       });
