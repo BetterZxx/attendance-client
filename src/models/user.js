@@ -1,5 +1,6 @@
 import { queryCurrent, query as queryUsers, reqUserInfo } from '@/services/user';
 import { routerRedux } from 'dva/router';
+import {setAuthority} from '@/utils/authority'
 import moment from 'moment';
 const UserModel = {
   namespace: 'user',
@@ -19,6 +20,7 @@ const UserModel = {
         const res = yield call(reqUserInfo, { studentID });
         console.log(res, res);
         if (res.status === 'success') {
+          
           yield put({
             type: 'setUsersInfo',
             payload: res,
@@ -35,6 +37,7 @@ const UserModel = {
     setUsersInfo(state, { payload }) {
       console.log(111, payload);
       const { student, indexStudents, unfinishTime } = payload;
+      setAuthority(['admin',student.userRole])
       let interval = {
         h: 0,
         m: 0,

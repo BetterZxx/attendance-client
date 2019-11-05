@@ -18,9 +18,12 @@ import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import '../../../node_modules/video-react/dist/video-react.css';
+import {words} from '@/utils/constant'
+import moment from 'moment'
+import Announcement from './components/Announcement'
 import styles from './style.less';
 const { confirm } = Modal;
-
+//这是一行注释
 const PageHeaderContent = ({ currentUser }) => {
   const loading = currentUser && Object.keys(currentUser).length;
 
@@ -35,7 +38,8 @@ const PageHeaderContent = ({ currentUser }) => {
       />
     );
   }
-
+const time = moment().format('HH')
+const greet = time<=5||time>=18?'晚上好':time<=11?'早安':'下午好'
   return (
     <div className={styles.pageHeaderContent}>
       <div className={styles.avatar}>
@@ -43,12 +47,13 @@ const PageHeaderContent = ({ currentUser }) => {
       </div>
       <div className={styles.content}>
         <div className={styles.contentTitle}>
-          早安，
+          {greet}，
           {currentUser.name}
           ，祝你开心每一天！
         </div>
         <div>
-          大家好，我叫{currentUser.name}
+          {/* 大家好，我叫{currentUser.name} */}
+            {words[Math.floor(Math.random()*words.length)]}
           {/* {currentUser.title} |{currentUser.group} */}
         </div>
       </div>
@@ -56,9 +61,10 @@ const PageHeaderContent = ({ currentUser }) => {
   );
 };
 
-@connect(({ user: { userInfo, rankUsers } }) => ({
+@connect(({ user: { userInfo, rankUsers },announcement }) => ({
   userInfo,
   rankUsers,
+  announcementData:announcement.data
 }))
 class Workplace extends Component {
   constructor(props) {
@@ -73,6 +79,9 @@ class Workplace extends Component {
   }
   componentDidMount() {
     const { dispatch } = this.props;
+    dispatch({
+      type:'announcement/fetch'
+    })
   }
 
   componentWillUnmount() {
@@ -196,8 +205,19 @@ class Workplace extends Component {
       curPage: page,
     });
   };
+  handleView = (id)=>{
+    console.log(id)
+    const {dispatch} = this.props
+    dispatch({
+      type:'announcement/getDetail',
+      payload:{
+        announcementId:id
+      }
+    })
+    this.props.history.push('/home/announcement/detail')
+  }
   render() {
-    const { userInfo, rankUsers } = this.props;
+    const { userInfo, rankUsers,announcementData } = this.props;
     const { gradeStatus, punchStatus, curPage } = this.state;
     let filterStudents = rankUsers
       .filter(item => {
@@ -261,6 +281,7 @@ class Workplace extends Component {
               }}
               bordered={false}
               className={styles.activeCard}
+              style={{minHeight:500}}
               title={
                 <div>
                   <Icon type="flag" style={{ marginRight: 15 }} />
@@ -356,7 +377,7 @@ class Workplace extends Component {
               bordered={false}
               title="公告"
             >
-              <div className={styles.chart}></div>
+              <Announcement data={announcementData} handleView={this.handleView}/>
             </Card>
             <Card
               bodyStyle={{
