@@ -15,7 +15,7 @@ const Model = {
         message.success('登录成功')
         
           localStorage.setItem('studentID', payload.studentID)
-          
+          setAuthority(['admin',response.role])
           if (response.status === 'success') {
             const urlParams = new URL(window.location.href);
             const params = getPageQuery();

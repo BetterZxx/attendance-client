@@ -37,7 +37,7 @@ const UserModel = {
     setUsersInfo(state, { payload }) {
       console.log(111, payload);
       const { student, indexStudents, unfinishTime } = payload;
-      setAuthority(['admin',student.userRole])
+      //setAuthority(['admin',student.userRole])
       let interval = {
         h: 0,
         m: 0,
