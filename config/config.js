@@ -7,28 +7,30 @@ const { pwa, primaryColor } = defaultSettings; // preview.pro.ant.design only do
 
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
-const proxyURL = "http://10.20.0.99:8085/"//'http://47.102.114.0:8080'
+const proxyURL = 'http://47.102.114.0:8080';
 
 //开发模式代理
-const proxyKeys = ['/register',
-'/login',
-'/getStudentAndPunchInfo',
-'/startPunch','/endPunch',
-'/updateStudentInfo',
-'/announcement',
-'/getPunchChart',
-'/getRegisterUserList',
-'/deleteUser',
-'/updateUserRole',
-]
+const proxyKeys = [
+  '/register',
+  '/login',
+  '/getStudentAndPunchInfo',
+  '/startPunch',
+  '/endPunch',
+  '/updateStudentInfo',
+  '/announcement',
+  '/getPunchChart',
+  '/getRegisterUserList',
+  '/deleteUser',
+  '/updateUserRole',
+];
 const proxyOptions = {
   target: proxyURL,
   changeOrigin: true,
-}
-const proxy = {}
-proxyKeys.forEach(item=>{
-  proxy[item] = proxyOptions
-})
+};
+const proxy = {};
+proxyKeys.forEach(item => {
+  proxy[item] = proxyOptions;
+});
 const plugins = [
   [
     'umi-plugin-react',
@@ -105,7 +107,6 @@ export default {
   devtool: isAntDesignProPreview ? 'source-map' : false,
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
-    
     {
       path: '/',
       component: '../layouts/BlankLayout',
@@ -141,24 +142,24 @@ export default {
         {
           path: '/',
           component: '../layouts/BasicLayout',
-          
+
           routes: [
             {
               name: '首页',
               path: '/',
               component: './home',
-              icon:'home'
+              icon: 'home',
             },
             {
-              path:'/home/announcement/detail',
-              component:'./announcement/detail',
-              hideInMenu:true
+              path: '/home/announcement/detail',
+              component: './announcement/detail',
+              hideInMenu: true,
             },
             {
               name: '数据统计',
               path: '/data/analysis',
               component: './analysis/index2',
-              icon:'bar-chart'
+              icon: 'bar-chart',
             },
             {
               name: '公告管理',
@@ -181,40 +182,40 @@ export default {
               path: '/manage/announcement/append',
               component: './announcement/append',
               icon: 'file-text',
-              hideInMenu:true
+              hideInMenu: true,
             },
             {
               name: '公告详情',
               path: '/manage/announcement/detail',
               component: './announcement/detail',
               icon: 'file-text',
-              hideInMenu:true
+              hideInMenu: true,
             },
-            
+
             {
               name: '系统设置',
               path: '/system/settings',
               component: './settings/index2',
-              icon:'setting'
+              icon: 'setting',
             },
             {
               name: '账户',
               path: '/account',
-              icon:'user',
-              routes:[
+              icon: 'user',
+              routes: [
                 {
-                  name:'个人中心',
-                  path:'/account/center',
-                  component:'./account/center/index2'
+                  name: '个人中心',
+                  path: '/account/center',
+                  component: './account/center/index2',
                 },
                 {
-                  name:'用户设置',
-                  path:'/account/setting',
-                  component:'./account/settings'
+                  name: '用户设置',
+                  path: '/account/setting',
+                  component: './account/settings',
                 },
-              ]
+              ],
             },
-            
+
             {
               component: '404',
             },
@@ -265,6 +266,6 @@ export default {
     basePath: '/',
   },
   chainWebpack: webpackPlugin,
-  
-  proxy
+
+  proxy,
 };
