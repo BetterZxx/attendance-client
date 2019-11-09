@@ -42,72 +42,82 @@ class TableList extends Component {
     formValues: {},
     stepFormValues: {},
     detailModalVisible:false,
-    text: '',
-    inputText:''
   };
 
   
   handleChange = (value) => {
-    this.setState({ text: value })
+    const {dispatch} = this.props
+    dispatch({
+      type:'announcement/changeDetail',
+      payload:{
+        content:value
+      }
+    })
   }
   componentDidMount(){
-    const {detail} = this.props
+    const {detail,dispatch,isModify} = this.props
     console.log('detail',detail)
-    if(Object.keys(detail).length>0)
-    this.setState({
-      text:detail.content,
-      inputText:detail.title
+    if(!isModify)
+    dispatch({
+      type:'announcement/changeDetail',
+      payload:{
+        title:'',
+        content:''
+      }
     })
   }
   handleSave = ()=>{
     const {dispatch,isModify,detail} = this.props
-    const {text,inputText} = this.state
+    const {title,content} = detail
     console.log(isModify)
     if(isModify){
       dispatch({
         type:'announcement/update',
         payload:{
           announcementId:detail.id,
-          content:text,
-          title:inputText
+          content,
+          title
         }
       })
     }else{
       dispatch({
         type:'announcement/saveAnnouncement',
         payload:{
-          content:text,
-          title:inputText
+          content,
+          title
         }
       })
     }
   }
   handlePublich = ()=>{
     const {dispatch,isModify,detail} = this.props
-    const {text,inputText} = this.state
+    const {content,title} = detail
     if(isModify){
       dispatch({
         type:'announcement/publishSaved',
         payload:{
           announcementId:detail.id,
-          content:text,
-          title:inputText
+          content,
+          title
         }
       })
     }else{
       dispatch({
         type:'announcement/publish',
         payload:{
-          content:text,
-          title:inputText
+          content,
+          title
         }
       })
     }
-
   }
   onInputChange = (e)=>{
-    this.setState({
-      inputText:e.target.value
+    const {dispatch} = this.props
+    dispatch({
+      type:'announcement/changeDetail',
+      payload:{
+        title:e.target.value
+      }
     })
   }
   handleCancelPublish = ()=>{
@@ -121,12 +131,11 @@ class TableList extends Component {
   }
   render() {
     const { form ,isModify,detail} = this.props;
-    const {inputText} = this.state
     const { getFieldDecorator } = form;
     
     const title = <div>
       <span>标题 :</span>
-        <Input placeholder='标题' style={{width:'80%',marginLeft:15} } value={inputText} onChange={this.onInputChange}></Input>
+        <Input placeholder='标题' style={{width:'80%',marginLeft:15} } value={detail.title} onChange={this.onInputChange}></Input>
     </div>
     const extra = <div>
       {isModify?<span style={{marginRight:18}}>
@@ -149,7 +158,7 @@ class TableList extends Component {
           title={title}
         >
           正文
-          <ReactQuill value={this.state.text }
+          <ReactQuill value={detail.content }
                   onChange={this.handleChange}
                   style={{height:600,marginBottom:50}}
                   />

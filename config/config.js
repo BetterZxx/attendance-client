@@ -7,7 +7,7 @@ const { pwa, primaryColor } = defaultSettings; // preview.pro.ant.design only do
 
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
-const proxyURL ='http://47.102.114.0:8080' //"http://10.20.0.99:8085/"//
+const proxyURL ='http://47.102.114.0:8083' //"http://10.20.0.99:8085/"//
 
 //开发模式代理
 const proxyKeys = ['/register',
@@ -166,7 +166,7 @@ export default {
               component: './announcement/announcements',
               icon: 'file-text',
               Routes: ['src/pages/Authorized'],
-              authority: [1],
+              authority: ["1"],
             },
             {
               name: '用户设置',
@@ -174,7 +174,7 @@ export default {
               component: './role',
               icon: 'user',
               Routes: ['src/pages/Authorized'],
-              authority: [1],
+              authority: ["1"],
             },
             {
               name: '新增公告',
@@ -191,12 +191,12 @@ export default {
               hideInMenu:true
             },
             
-            {
-              name: '系统设置',
-              path: '/system/settings',
-              component: './settings/index2',
-              icon:'setting'
-            },
+            // {
+            //   name: '系统设置',
+            //   path: '/system/settings',
+            //   component: './settings/index2',
+            //   icon:'setting'
+            // },
             {
               name: '账户',
               path: '/account',
