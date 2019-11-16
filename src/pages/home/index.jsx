@@ -13,6 +13,7 @@ import {
   Icon,
   Descriptions,
   Modal,
+  message
 } from 'antd';
 import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -20,7 +21,13 @@ import { connect } from 'dva';
 import '../../../node_modules/video-react/dist/video-react.css';
 import {words} from '@/utils/constant'
 import moment from 'moment'
+import ReactPlayer from 'react-player';
+import { saveAs } from 'file-saver';
 import Announcement from './components/Announcement'
+import '@/assets/build/tracking'
+import '@/assets/build/data/face'
+import '@/assets/build/data/mouth'
+import '@/assets/build/data/eye'
 import styles from './style.less';
 const { confirm } = Modal;
 //这是一行注释
@@ -82,10 +89,93 @@ class Workplace extends Component {
     dispatch({
       type:'announcement/fetch'
     })
+    let canvas = document.getElementById('drawer')
+    var context = canvas.getContext('2d');
+    var objects = new tracking.ObjectTracker(['face']);
+
+    objects.on('track',function (event)
+    {
+      console.log(event)
+      
+        //context.clearRect(0, 0, canvas.width, canvas.height);
+
+        if(event.data.length  === 0)
+        {
+
+        }
+        else
+        {
+          
+           event.data.forEach(function(rect)
+           {
+            //在图中画框框
+            alert('11111111')
+            message.success('111')
+             context.strokeStyle = '#a64ceb';
+             context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+             context.font = '11px Helvetica';
+             context.fillStyle = "#fff";
+             context.fillText('x: ' + rect.x + 'px', rect.x + rect.width , rect.y );
+             context.fillText('y: ' + rect.y + 'px', rect.x + rect.width , rect.y );
+
+           });
+        }
+
+    });
+    tracking.track('#player', objects);
+    // var ctx=drawer.getContext("2d");
+    // ctx.fillStyle="#FF0000";
+    // ctx.fillRect(0,0,150,75);
   }
+  openCamera = () => {
+    let constraints ={video:{
+      width:3,
+      height:2
+    }}
+    //  {
+    //   video: { width: 600, height: 400 },
+    //   audio: true,
+    // };
+    let player = document.getElementById('player')
+    let successCb = MediaStream => {
+      console.log(MediaStream);
+      player.srcObject = MediaStream
+      this.setState({ MediaStream });
+    };
+    ////////////////////////////////
+    if (navigator.mediaDevices === undefined) {
+      navigator.mediaDevices = {};
+    }
+
+    // 一些浏览器部分支持 mediaDevices。我们不能直接给对象设置 getUserMedia
+    // 因为这样可能会覆盖已有的属性。这里我们只会在没有getUserMedia属性的时候添加它。
+    if (navigator.mediaDevices.getUserMedia === undefined) {
+      navigator.mediaDevices.getUserMedia = function(constraints) {
+        // 首先，如果有getUserMedia的话，就获得它
+        var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+        // 一些浏览器根本没实现它 - 那么就返回一个error到promise的reject来保持一个统一的接口
+        if (!getUserMedia) {
+          return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+        }
+
+        // 否则，为老的navigator.getUserMedia方法包裹一个Promise
+        return new Promise(function(resolve, reject) {
+          getUserMedia.call(navigator, constraints, resolve, reject);
+        });
+      };
+    }
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(successCb)
+      .catch(function(err) {
+        console.log(err.name + ': ' + err.message);
+      });
+  };
 
   componentWillUnmount() {
     const { dispatch } = this.props;
+    
   }
   ListContent = user => (
     <div className={styles.listContent}>
@@ -145,7 +235,19 @@ class Workplace extends Component {
       </List.Item>
     );
   };
+  
+  captureImg = () => {
+    let player = document.getElementById('player').childNodes[0];
 
+    let c = document.createElement('canvas');
+    c.width = 600;
+    c.height = 400;
+    var cxt = c.getContext('2d');
+    cxt.drawImage(player, 0, 0, 600, 400);
+    c.toBlob(blob => {
+      saveAs(blob, 'test.png');
+    }, 'image/png');
+  };
   handleGradeStatusChange = e => {
     this.setState({
       gradeStatus: e.target.value,
@@ -275,6 +377,91 @@ class Workplace extends Component {
       >
         <Row gutter={24}>
           <Col xl={16} lg={24} md={24} sm={24} xs={24}>
+          <Card
+              className={styles.projectList}
+              style={{
+                marginBottom: 24,
+              }}
+              title="狼眼识别"
+              bordered={false}
+              bodyStyle={{
+                padding: 0,
+              }}
+            >
+              <Row>
+                <Col span={16}>
+                  <div
+                    style={{
+                      background: `url(${this.state.img}) no-repeat`,
+                      backgroundSize: '535px 350px',
+                      backgroundColor: '#eee',
+                      height:350
+                    }}
+                  >
+                    {/* <ReactPlayer
+                      id="player"
+                      playing={true}
+                      url={this.state.MediaStream}
+                      width='100'
+                      height='100'
+                    >
+                      
+                    </ReactPlayer> */}
+                    <video id='player'  preload="true" autoPlay loop muted style={{
+                     
+                     width:360,
+                    
+                      position:'absolute'
+                      
+                      
+                    }}
+                    
+                    ></video>
+                    <canvas id='drawer' style={{
+                      width:500,
+                      height:'350px',
+                      position:'absolute',
+                      zIndex:999
+                    }}></canvas>
+                    
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div>
+                    <Row type="flex" justify="space-around" style={{ marginTop: 20 }}>
+                      <Col span={12} style={{ textAlign: 'center' }}>
+                        <Button onClick={this.openCamera} type="primary">
+                          启动摄像头
+                        </Button>
+                      </Col>
+                      <Col span={12} style={{ textAlign: 'center' }}>
+                        <Button onClick={this.startPunch} type="primary">
+                          开始打卡
+                        </Button>
+                      </Col>
+                    </Row>
+
+                    <Descriptions column={1} style={{ marginTop: 20, marginLeft: 15 }}>
+                      <Descriptions.Item label="本周打卡">
+                        <Statistic value={userInfo.weekTime} suffix="h" />
+                      </Descriptions.Item>
+                      <Descriptions.Item label="今日打卡">{userInfo.todayTime}h</Descriptions.Item>
+                      <Descriptions.Item label="剩余打卡时间">
+                        {userInfo.weekLeftTime}h
+                      </Descriptions.Item>
+                      <Descriptions.Item label="状态">
+                        <Badge status={userInfo.punch ? 'processing' : 'default'}></Badge>
+                        {userInfo.punch ? '打卡中' : '未打卡'}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="本次已打卡">{`${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`}</Descriptions.Item>
+                    </Descriptions>
+                    <Button style={{ marginLeft: 15, marginTop: 15 }} onClick={this.endPunch}>
+                      停止打卡
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
+            </Card>
             <Card
               bodyStyle={{
                 padding: 0,
@@ -332,7 +519,19 @@ class Workplace extends Component {
             </Card>
           </Col>
           <Col xl={8} lg={24} md={24} sm={24} xs={24}>
-            <Card
+          <Card
+              style={{
+                marginBottom: 24,
+              }}
+              title="快速开始 / 便捷导航"
+              bordered={false}
+              bodyStyle={{
+                padding: 0,
+              }}
+            >
+              {/* <EditableLinkGroup onAdd={() => {}} links={links} linkElement={Link} /> */}
+            </Card>
+            {/* <Card
               style={{
                 marginBottom: 24,
               }}
@@ -369,7 +568,7 @@ class Workplace extends Component {
                   <Descriptions.Item label="本次已打卡">{`${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`}</Descriptions.Item>
                 </Descriptions>
               </div>
-            </Card>
+            </Card> */}
             <Card
               style={{
                 marginBottom: 24,
