@@ -31,7 +31,7 @@ class Chart extends Component {
         type: 'continuous',
         seriesIndex: 0,
         min: 0,
-        max: 400
+        max: 10
     }],
     title: [{
         left: 'center',
@@ -41,10 +41,12 @@ class Chart extends Component {
         trigger: 'axis'
     },
     xAxis: [{
-        data: dateList
+        data: dateList,
+        name:'日期'
     }],
     yAxis: [{
-        splitLine: {show: false}
+        splitLine: {show: false},
+        name:'打卡时长/h'
     }],
     grid: [{
         bottom: '60%'
@@ -52,7 +54,12 @@ class Chart extends Component {
     series: [{
         type: 'line',
         showSymbol: false,
-        data: valueList
+        data: valueList,
+        markLine: {
+          data: [
+              {type: 'average', name: '平均值'}
+          ]
+      }
     }]
   }
 }

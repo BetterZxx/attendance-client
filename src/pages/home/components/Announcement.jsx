@@ -17,7 +17,7 @@ const Announcement = ({ loading,data, dropdownGroup,handleView }) => (
       renderItem={item => (
         <List.Item>
           <div style={{width:'100%'}}>
-            <Icon style={{marginRight:15}} type='right'></Icon>
+            <Icon style={{marginRight:12,fontSize:13}} type='right'></Icon>
             <span onClick={()=>handleView(item.id)} className={styles.announceListSpan}>{item.title}</span>
             <span style={{float:'right'}}>{moment(item.publishTime).format('YYYY-MM-DD')}</span>
           </div>

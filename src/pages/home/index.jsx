@@ -321,6 +321,7 @@ class Workplace extends Component {
   render() {
     const { userInfo, rankUsers,announcementData } = this.props;
     const { gradeStatus, punchStatus, curPage } = this.state;
+    const publishedAnnounce = announcementData.filter(item=>item.status===1)
     let filterStudents = rankUsers
       .filter(item => {
         return gradeStatus === 0 || userInfo.grade === item.grade;
@@ -576,7 +577,7 @@ class Workplace extends Component {
               bordered={false}
               title="公告"
             >
-              <Announcement data={announcementData} handleView={this.handleView}/>
+              <Announcement data={publishedAnnounce} handleView={this.handleView}/>
             </Card>
             <Card
               bodyStyle={{

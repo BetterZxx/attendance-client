@@ -16,7 +16,7 @@ const Model = {
   state: {
     data: [],
     isModify: false,
-    detail: {},
+    detail: {title:'',content:''},
   },
   effects: {
     *fetch({ payload }, { call, put }) {
@@ -27,7 +27,7 @@ const Model = {
           payload: response.data,
         });
       }else{
-        message.error('请求出错')
+        message.warning('登录已过期，请重新登录')
       }
     },
     *filter({payload},{call,put}){
@@ -140,6 +140,9 @@ const Model = {
     saveDetail(state, { payload }) {
       return { ...state, detail: payload };
     },
+    changeDetail(state,{payload}){
+      return {...state,detail:{...state.detail,...payload}}
+    }
   },
 };
 export default Model;

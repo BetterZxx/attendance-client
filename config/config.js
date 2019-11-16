@@ -170,7 +170,7 @@ export default {
               component: './announcement/announcements',
               icon: 'file-text',
               Routes: ['src/pages/Authorized'],
-              authority: [1],
+              authority: ["1"],
             },
             {
               name: '用户设置',
@@ -178,7 +178,7 @@ export default {
               component: './role',
               icon: 'user',
               Routes: ['src/pages/Authorized'],
-              authority: [1],
+              authority: ["1"],
             },
             {
               name: '新增公告',
@@ -195,12 +195,19 @@ export default {
               hideInMenu: true,
             },
 
+
             {
               name: '系统设置',
               path: '/system/settings',
               component: './settings/index2',
               icon: 'setting',
-            },
+            },     
+            // {
+            //   name: '系统设置',
+            //   path: '/system/settings',
+            //   component: './settings/index2',
+            //   icon:'setting'
+            // },
             {
               name: '账户',
               path: '/account',
