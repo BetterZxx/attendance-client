@@ -1,4 +1,4 @@
-import { reqRegister } from './service';
+import { reqRegister,reqAddImage,reqAddToken } from './service';
 import {message} from 'antd'
 import { routerRedux } from 'dva/router';
 
@@ -18,6 +18,22 @@ const Model = {
       }
         
     },
+    *upload({payload},{call,put}){
+      const res = yield call(reqAddToken,payload.formData)
+      if(res.suc_message){
+        const res1 = yield call(reqAddImage,payload.formData)
+        if(res1.suc_message){
+          yield put({
+            type:'submit',
+            payload:payload.data
+          })
+        }else{
+          message.error('上传图片失败')
+        }
+      }else{
+        message.error('上传token失败')
+      }
+    }
   },
   reducers: {
     registerHandle(state, { payload }) {

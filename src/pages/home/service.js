@@ -12,3 +12,9 @@ export async function reqEndPunch(params) {
     data: params,
   });
 }
+export async function reqNameByFace(params){
+  return request('/get_know_tokens',{
+    method:'post',
+    data:params
+  })
+}

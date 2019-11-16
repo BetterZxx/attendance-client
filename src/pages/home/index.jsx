@@ -89,43 +89,7 @@ class Workplace extends Component {
     dispatch({
       type:'announcement/fetch'
     })
-    let canvas = document.getElementById('drawer')
-    var context = canvas.getContext('2d');
-    var objects = new tracking.ObjectTracker(['face']);
-
-    objects.on('track',function (event)
-    {
-      console.log(event)
-      
-        //context.clearRect(0, 0, canvas.width, canvas.height);
-
-        if(event.data.length  === 0)
-        {
-
-        }
-        else
-        {
-          
-           event.data.forEach(function(rect)
-           {
-            //在图中画框框
-            alert('11111111')
-            message.success('111')
-             context.strokeStyle = '#a64ceb';
-             context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-             context.font = '11px Helvetica';
-             context.fillStyle = "#fff";
-             context.fillText('x: ' + rect.x + 'px', rect.x + rect.width , rect.y );
-             context.fillText('y: ' + rect.y + 'px', rect.x + rect.width , rect.y );
-
-           });
-        }
-
-    });
-    tracking.track('#player', objects);
-    // var ctx=drawer.getContext("2d");
-    // ctx.fillStyle="#FF0000";
-    // ctx.fillRect(0,0,150,75);
+    
   }
   openCamera = () => {
     let constraints ={video:{
@@ -237,13 +201,12 @@ class Workplace extends Component {
   };
   
   captureImg = () => {
-    let player = document.getElementById('player').childNodes[0];
-
+    let player = document.getElementById('player');
     let c = document.createElement('canvas');
-    c.width = 600;
-    c.height = 400;
+    c.width = 521;
+    c.height = 354;
     var cxt = c.getContext('2d');
-    cxt.drawImage(player, 0, 0, 600, 400);
+    cxt.drawImage(player, 0, 0, 521, 354);
     c.toBlob(blob => {
       saveAs(blob, 'test.png');
     }, 'image/png');
@@ -259,17 +222,33 @@ class Workplace extends Component {
     });
   };
   startPunch = () => {
+    this.captureImg()
     const { dispatch, userInfo } = this.props;
+    let player = document.getElementById('player');
+    let c = document.createElement('canvas');
+    c.width = 521;
+    c.height = 354;
+    var cxt = c.getContext('2d');
+    cxt.drawImage(player, 0, 0, 521, 354);
+
     if (userInfo.punch) {
       Modal.success({
         title: '您正在打卡中',
         content: `本次已打卡${userInfo.unfinishTime.h}hour ${userInfo.unfinishTime.m}min`,
       });
     } else
-      dispatch({
-        type: 'home/startPunch',
-        payload: { studentID: userInfo.studentID },
-      });
+      c.toBlob(blob => {
+        let formData = new FormData
+        formData.append('file',blob)
+        dispatch({
+          type: 'home/checkFace',
+          payload:{
+            data:{ studentID: userInfo.studentID },
+            formData,
+            name:userInfo.name
+          } ,
+        });
+      }, 'image/png');   
   };
 
   endPunch = () => {
@@ -399,32 +378,13 @@ class Workplace extends Component {
                       height:350
                     }}
                   >
-                    {/* <ReactPlayer
-                      id="player"
-                      playing={true}
-                      url={this.state.MediaStream}
-                      width='100'
-                      height='100'
-                    >
+                      <video id='player'  preload="true" autoPlay loop muted style={{                 
+                      width:520,
+                      height:354,   
+                      position:'absolute'                        
+                      }}
                       
-                    </ReactPlayer> */}
-                    <video id='player'  preload="true" autoPlay loop muted style={{
-                     
-                     width:360,
-                    
-                      position:'absolute'
-                      
-                      
-                    }}
-                    
-                    ></video>
-                    <canvas id='drawer' style={{
-                      width:500,
-                      height:'350px',
-                      position:'absolute',
-                      zIndex:999
-                    }}></canvas>
-                    
+                      ></video>
                   </div>
                 </Col>
                 <Col span={8}>

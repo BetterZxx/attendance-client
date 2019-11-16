@@ -31,6 +31,8 @@ class Register extends Component {
     visible: false,
     help: '',
     prefix: '86',
+    fileList:[],
+    uploading:false
   };
 
   interval = undefined;
@@ -87,9 +89,13 @@ class Register extends Component {
   };
 
   handleSubmit = e => {
-    
     e.preventDefault();
     const { form, dispatch } = this.props;
+    const {fileList} = this.state
+    if(fileList.length===0){
+      message.error('请先上传照片')
+      return;
+    }
     form.validateFields(
       {
         force: true,
@@ -97,7 +103,9 @@ class Register extends Component {
       (err, values) => {
         
         if (!err) {
-          
+          let formData = new FormData()
+          formData.append('file',fileList[0])
+          formData.append('name',values.name)
           const { prefix } = this.state;
           let payload = values;
           payload.id = 0
@@ -108,8 +116,11 @@ class Register extends Component {
           payload.ispunch = 0
           delete payload.confirm
           dispatch({
-            type: 'userRegister/submit',
-            payload,
+            type: 'userRegister/upload',
+            payload:{
+              data:payload,
+              formData
+            },
           });
           console.log(payload)
         }
@@ -185,27 +196,62 @@ class Register extends Component {
       </div>
     ) : null;
   };
+  handleUpload = () => {
+    const { fileList } = this.state;
+    const formData = new FormData();
+    fileList.forEach(file => {
+      formData.append('files[]', file);
+    });
+
+    this.setState({
+      uploading: true,
+    });
+
+    // You can use any AJAX library you like
+    reqwest({
+      url: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+      method: 'post',
+      processData: false,
+      data: formData,
+      success: () => {
+        this.setState({
+          fileList: [],
+          uploading: false,
+        });
+        message.success('upload successfully.');
+      },
+      error: () => {
+        this.setState({
+          uploading: false,
+        });
+        message.error('upload failed.');
+      },
+    });
+  };
 
   render() {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
     const { count, prefix, help, visible } = this.state;
+    const { uploading, fileList } = this.state;
     const props = {
-      name: 'file',
-      action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-      headers: {
-        authorization: 'authorization-text',
+      onRemove: file => {
+        this.setState(state => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
       },
-      onChange(info) {
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        }
+      beforeUpload: file => {
+        this.setState(state => ({
+          fileList: [file],
+        }));
+        return false;
       },
+      fileList,
     };
     
     return (
@@ -304,6 +350,14 @@ class Register extends Component {
                   <Radio value='1'>男</Radio>
                   <Radio value='0'>女</Radio>
                 </Radio.Group>)}
+                <Upload {...props} style={{
+                  marginLeft:120,
+
+                }}>
+                  <Button>
+                    <Icon type="upload" /> 上传照片
+                  </Button>
+                </Upload>
               
           </FormItem>
           <FormItem>

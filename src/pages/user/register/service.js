@@ -6,3 +6,15 @@ export async function reqRegister(params) {
     data: params,
   });
 }
+export async function reqAddToken(params){
+  return request('/add_tokens',{
+    method:'post',
+    data:params
+  })
+}
+export async function reqAddImage(params){
+  return request('add_image',{
+    method:'post',
+    data:params
+  })
+}

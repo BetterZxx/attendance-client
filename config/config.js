@@ -34,6 +34,19 @@ const proxy = {};
 proxyKeys.forEach(item => {
   proxy[item] = proxyOptions;
 });
+const faceUrl = 'http://face.com:8080'
+proxy['/add_image'] = {
+  target:faceUrl,
+  changeOrigin:true
+}
+proxy['/add_tokens'] = {
+  target:faceUrl,
+  changeOrigin:true
+}
+proxy['/get_know_tokens'] = {
+  target:faceUrl,
+  changeOrigin:true
+}
 const plugins = [
   [
     'umi-plugin-react',
