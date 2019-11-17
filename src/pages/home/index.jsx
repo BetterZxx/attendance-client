@@ -24,10 +24,6 @@ import moment from 'moment'
 import ReactPlayer from 'react-player';
 import { saveAs } from 'file-saver';
 import Announcement from './components/Announcement'
-import '@/assets/build/tracking'
-import '@/assets/build/data/face'
-import '@/assets/build/data/mouth'
-import '@/assets/build/data/eye'
 import styles from './style.less';
 const { confirm } = Modal;
 //这是一行注释

@@ -13,7 +13,7 @@ export async function reqAddToken(params){
   })
 }
 export async function reqAddImage(params){
-  return request('add_image',{
+  return request('/add_images',{
     method:'post',
     data:params
   })

@@ -34,8 +34,8 @@ const proxy = {};
 proxyKeys.forEach(item => {
   proxy[item] = proxyOptions;
 });
-const faceUrl = 'http://face.com:8080'
-proxy['/add_image'] = {
+const faceUrl = 'http://hsr.free.idcfengye.com'
+proxy['/add_images'] = {
   target:faceUrl,
   changeOrigin:true
 }
