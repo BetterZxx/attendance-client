@@ -13,7 +13,8 @@ import {
   Icon,
   Descriptions,
   Modal,
-  message
+  message,
+  Spin
 } from 'antd';
 import React, { Component } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -63,11 +64,15 @@ const greet = time<=5||time>=18?'晚上好':time<=11?'早安':'下午好'
     </div>
   );
 };
-
-@connect(({ user: { userInfo, rankUsers },announcement }) => ({
+const loadingMap = {
+  '1':'正在进行人脸认证...',
+  '2':'正在进行ip认证...'
+}
+@connect(({ user: { userInfo, rankUsers },announcement,home }) => ({
   userInfo,
   rankUsers,
-  announcementData:announcement.data
+  announcementData:announcement.data,
+  loading:home.loading
 }))
 class Workplace extends Component {
   constructor(props) {
@@ -294,7 +299,7 @@ class Workplace extends Component {
     this.props.history.push('/home/announcement/detail')
   }
   render() {
-    const { userInfo, rankUsers,announcementData } = this.props;
+    const { userInfo, rankUsers,announcementData,loading } = this.props;
     const { gradeStatus, punchStatus, curPage } = this.state;
     const publishedAnnounce = announcementData.filter(item=>item.status===1)
     let filterStudents = rankUsers
@@ -334,7 +339,8 @@ class Workplace extends Component {
       </div>
     );
     return (
-      <PageHeaderWrapper
+      
+        <PageHeaderWrapper
         content={<PageHeaderContent currentUser={userInfo} />}
         extra={headStatus}
         extraContent={extraContent}
@@ -350,7 +356,12 @@ class Workplace extends Component {
             },
           ],
         }}
+        loading={true}
       >
+        <Spin
+        spinning={loading!==0}
+        tip={loadingMap[loading]}
+        >
         <Row gutter={24}>
           <Col xl={16} lg={24} md={24} sm={24} xs={24}>
           <Card
@@ -363,6 +374,7 @@ class Workplace extends Component {
               bodyStyle={{
                 padding: 0,
               }}
+             
             >
               <Row>
                 <Col span={16}>
@@ -549,7 +561,9 @@ class Workplace extends Component {
             </Card>
           </Col>
         </Row>
+        </Spin>
       </PageHeaderWrapper>
+      
     );
   }
 }

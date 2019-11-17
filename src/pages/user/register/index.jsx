@@ -22,7 +22,7 @@ const passwordProgressMap = {
 
 @connect(({ userRegister, loading }) => ({
   userRegister,
-  submitting: loading.effects['userRegister/submit'],
+  submitting: loading.models.userRegister,
 }))
 class Register extends Component {
   state = {

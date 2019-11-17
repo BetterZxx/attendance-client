@@ -10,6 +10,7 @@ const Model = {
     projectNotice: [],
     activities: [],
     radarData: [],
+    loading:0
   },
   effects: {
     *startPunch({ payload }, { call, put }) {
@@ -28,24 +29,43 @@ const Model = {
       } else {
         message.error('打卡异常');
       }
+      yield put({
+        type:'changeLoading',
+        payload:0
+      })
     },
     *checkFace({payload},{call,put}){
+      yield put({
+        type:'changeLoading',
+        payload:1
+      })
       const res = yield call(reqNameByFace,payload.formData)
       const {name,data} = payload
       if(res.face_name){
         let realName =  decodeUnicode(res.face_name)
         if(name === realName){
+          yield put({
+            type:'changeLoading',
+            payload:2
+          })
           message.success('人脸识别成功，开始ip认证')
           yield put({
             type:'startPunch',
             payload:data
           })
         }else{
+          yield put({
+            type:'changeLoading',
+            payload:0
+          })
           message.error('人脸识别非本人，打卡失败！')
         }
       }else{
-        message.error(`服务器异常:${res.err_message}`)
-
+        yield put({
+          type:'changeLoading',
+          payload:0
+        })
+        message.error(`服务器异常:${res.err_message},打卡失败!`)
       }
     }
     ,
@@ -67,6 +87,11 @@ const Model = {
       }
     },
   },
-  reducers: {},
+  reducers: {
+    changeLoading(state,{payload}){
+      return {...state,loading:payload}
+
+    }
+  },
 };
 export default Model;
