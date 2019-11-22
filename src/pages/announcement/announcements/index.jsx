@@ -41,8 +41,8 @@ const statusMap = [, 'processing','default', 'success', 'error'];
 const status = [,'已发布','未发布'];
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ listTableList, loading,announcement }) => ({
-  listTableList,
+@connect(({  loading,announcement }) => ({
+
   loading: loading.models.listTableList,
   announcements:announcement.data
 }))

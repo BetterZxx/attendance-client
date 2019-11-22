@@ -36,7 +36,7 @@ const Model = {
             }
           }
 
-          yield put(routerRedux.replace(redirect || '/'));
+          window.location.href = urlParams.origin
         }
       } else {
         message.error('用户名不存在或密码错误！');

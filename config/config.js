@@ -214,6 +214,7 @@ export default {
               path: '/system/settings',
               component: './settings/index2',
               icon: 'setting',
+              authority: ["1"],
             },     
             // {
             //   name: '系统设置',

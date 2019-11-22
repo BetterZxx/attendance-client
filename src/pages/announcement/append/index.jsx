@@ -24,6 +24,7 @@ import moment from 'moment';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ReactQuill from 'react-quill'; // ES6
 import 'react-quill/dist/quill.snow.css'; // ES6
+
 const FormItem = Form.Item;
 const {TextArea} = Input
 /* eslint react/no-multi-comp:0 */
