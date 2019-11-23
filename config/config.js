@@ -34,7 +34,7 @@ const proxy = {};
 proxyKeys.forEach(item => {
   proxy[item] = proxyOptions;
 });
-const faceUrl = 'http://hsr.free.idcfengye.com'
+const faceUrl = 'http://49.234.87.40'
 proxy['/add_images'] = {
   target:faceUrl,
   changeOrigin:true
