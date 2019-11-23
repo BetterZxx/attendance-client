@@ -223,7 +223,7 @@ class Workplace extends Component {
     });
   };
   startPunch = () => {
-    this.captureImg()
+    //this.captureImg()
     const { dispatch, userInfo } = this.props;
     let player = document.getElementById('player');
     let c = document.createElement('canvas');
