@@ -16,7 +16,7 @@ const AvatarView = ({ avatar }) => (
     </div>
     <Upload fileList={[]}>
       <div className={styles.button_view}>
-        <Button icon="upload">更换头像</Button>
+        <Button icon="upload" onClick={()=>{message.warning('抱歉,这个功能暂时用不了！')}}>更换头像</Button>
       </div>
     </Upload>
   </Fragment>
@@ -217,7 +217,7 @@ class BaseView extends Component {
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={userInfo.avatar} />
+          <AvatarView avatar={userInfo.sex===1?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} />
         </div>
       </div>
     );

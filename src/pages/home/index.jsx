@@ -47,7 +47,7 @@ const greet = time<=5||time>=18?'晚上好':time<=11?'早安':'下午好'
   return (
     <div className={styles.pageHeaderContent}>
       <div className={styles.avatar}>
-        <Avatar size="large" src={currentUser.avatar} />
+        <Avatar size="large" src={currentUser.sex===1?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} />
       </div>
       <div className={styles.content}>
         <div className={styles.contentTitle}>
@@ -182,7 +182,7 @@ class Workplace extends Component {
           <Col span={6}>
             <List.Item.Meta
               style={{}}
-              avatar={<Avatar src={item.avatar} />}
+              avatar={<Avatar src={(Math.random()-0.5)>0?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} />}
               title={
                 <span>
                   <a className={styles.username}>{item.name}</a>
@@ -369,7 +369,7 @@ class Workplace extends Component {
               style={{
                 marginBottom: 24,
               }}
-              title="狼眼识别"
+              title="打卡面板"
               bordered={false}
               bodyStyle={{
                 padding: 0,

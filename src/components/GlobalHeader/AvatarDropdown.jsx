@@ -20,8 +20,14 @@ class AvatarDropdown extends React.Component {
 
       return;
     }
-
-    router.push(`/account-c/setting`);
+    if (key === 'center') {
+      router.push(`/account/center`);
+      return;
+    }
+    if (key === 'settings') {
+      router.push(`/account/setting`);
+      return;
+    }
   };
 
   render() {
@@ -57,7 +63,7 @@ class AvatarDropdown extends React.Component {
     return currentUser && currentUser.name ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
+          <Avatar size="small" className={styles.avatar} src={currentUser.sex===1?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} alt="avatar" />
           <span className={styles.name}>{currentUser.name}</span>
         </span>
       </HeaderDropdown>
