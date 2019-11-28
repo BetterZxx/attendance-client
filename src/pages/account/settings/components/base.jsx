@@ -7,7 +7,7 @@ import styles from './BaseView.less';
 
 const FormItem = Form.Item;
 const { Option } = Select; // 头像组件 方便以后独立，增加裁剪之类的功能
-
+//bug fix
 const AvatarView = ({ avatar }) => (
   <Fragment>
     <div className={styles.avatar_title}>头像</div>
