@@ -1,4 +1,4 @@
-import { Alert, Checkbox, Icon } from 'antd';
+import { Alert, Checkbox, Icon,Modal } from 'antd';
 import React, { Component } from 'react';
 import Link from 'umi/link';
 import { connect } from 'dva';
@@ -6,7 +6,7 @@ import LoginComponents from './components/Login';
 import styles from './style.less';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
-
+const {confirm} = Modal
 @connect(({ userLogin, loading }) => ({
   userLogin,
   submitting: loading.effects['userLogin/login'],
@@ -74,7 +74,12 @@ class Login extends Component {
       showIcon
     />
   );
-
+handleForgetPassword = ()=>{
+  Modal.warning({
+    title: '请联系管理员',
+    content: 'qq:123456',
+  });
+}
   render() {
     const { userLogin, submitting } = this.props;
     const { status, type: loginType } = userLogin;
@@ -129,7 +134,7 @@ class Login extends Component {
               style={{
                 float: 'right',
               }}
-              href=""
+              onClick={this.handleForgetPassword}
             >
               忘记密码
             </a>
