@@ -18,3 +18,10 @@ export async function reqNameByFace(params){
     data:params
   })
 }
+export async function delayTwoSecond(){
+  return new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+      resolve('finish')
+    },3000)
+  })
+}

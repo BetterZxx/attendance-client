@@ -18,3 +18,9 @@ export async function reqUpdateStuInfo(params) {
     data: params,
   });
 }
+export async function reqUploadImg(params){
+  return request('/uploadfile',{
+    method:'post',
+    data:params
+  })
+}

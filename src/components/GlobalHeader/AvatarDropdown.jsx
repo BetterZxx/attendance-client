@@ -36,16 +36,17 @@ class AvatarDropdown extends React.Component {
         avatar: '',
         name: '',
       },
+      picture,
       menu,
     } = this.props;
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        {menu && (
+        {/* {menu && (
           <Menu.Item key="center">
             <Icon type="user" />
             个人中心
           </Menu.Item>
-        )}
+        )} */}
         {menu && (
           <Menu.Item key="settings">
             <Icon type="setting" />
@@ -63,7 +64,7 @@ class AvatarDropdown extends React.Component {
     return currentUser && currentUser.name ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={currentUser.sex===1?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} alt="avatar" />
+          <Avatar size="small" className={styles.avatar} src={picture||currentUser.avatar} alt="avatar" />
           <span className={styles.name}>{currentUser.name}</span>
         </span>
       </HeaderDropdown>
@@ -79,6 +80,6 @@ class AvatarDropdown extends React.Component {
   }
 }
 
-export default connect(({ user }) => ({
-  currentUser: user.userInfo,
+export default connect(({ user,home }) => ({
+  currentUser: user.userInfo,picture:home.picture
 }))(AvatarDropdown);

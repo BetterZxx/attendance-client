@@ -35,6 +35,11 @@ proxyKeys.forEach(item => {
   proxy[item] = proxyOptions;
 });
 const faceUrl = 'http://49.234.87.40'
+const uploadFile = 'http://119.23.29.240:3010'
+proxy['/uploadfile'] = {
+  target:uploadFile,
+  changeOrigin:true
+}
 proxy['/add_images'] = {
   target:faceUrl,
   changeOrigin:true
@@ -186,7 +191,7 @@ export default {
               authority: ["1"],
             },
             {
-              name: '用户设置',
+              name: '用户管理',
               path: '/manage/role',
               component: './role',
               icon: 'user',
@@ -209,13 +214,13 @@ export default {
             },
 
 
-            {
-              name: '系统设置',
-              path: '/system/settings',
-              component: './settings/index2',
-              icon: 'setting',
-              authority: ["1"],
-            },     
+            // {
+            //   name: '系统设置',
+            //   path: '/system/settings',
+            //   component: './settings/index2',
+            //   icon: 'setting',
+            //   authority: ["1"],
+            // },     
             // {
             //   name: '系统设置',
             //   path: '/system/settings',
@@ -227,11 +232,11 @@ export default {
               path: '/account',
               icon: 'user',
               routes: [
-                {
-                  name: '个人中心',
-                  path: '/account/center',
-                  component: './account/center/index2',
-                },
+                // {
+                //   name: '个人中心',
+                //   path: '/account/center',
+                //   component: './account/center/index2',
+                // },
                 {
                   name: '用户设置',
                   path: '/account/setting',
@@ -239,7 +244,6 @@ export default {
                 },
               ],
             },
-
             {
               component: '404',
             },

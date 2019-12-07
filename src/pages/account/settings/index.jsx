@@ -24,9 +24,9 @@ class Settings extends Component {
     super(props);
     const menuMap = {
       base: '基本设置',
-      security: '安全设置',
-      binding: '账号绑定',
-      notification: '新消息通知',
+      // security: '安全设置',
+      // binding: '账号绑定',
+      // notification: '新消息通知',
     };
     this.state = {
       mode: 'inline',

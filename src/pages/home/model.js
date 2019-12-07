@@ -1,4 +1,4 @@
-import { reqEndPunch, reqStartPunch,reqNameByFace } from './service';
+import { reqEndPunch, reqStartPunch,reqNameByFace,delayTwoSecond } from './service';
 import { message, Modal } from 'antd';
 function decodeUnicode(str) { 
   str = str.replace(/\\/g, "%"); return unescape(str);
@@ -10,7 +10,8 @@ const Model = {
     projectNotice: [],
     activities: [],
     radarData: [],
-    loading:0
+    loading:0,
+    picture:''
   },
   effects: {
     *startPunch({ payload }, { call, put }) {
@@ -49,6 +50,7 @@ const Model = {
             payload:2
           })
           message.success('人脸识别成功，开始ip认证')
+          yield call(delayTwoSecond)
           yield put({
             type:'startPunch',
             payload:data
@@ -91,7 +93,10 @@ const Model = {
     changeLoading(state,{payload}){
       return {...state,loading:payload}
 
-    }
+    },
+    savePicture(state,{payload}){
+      return {...state,picture:payload}
+    },
   },
 };
 export default Model;

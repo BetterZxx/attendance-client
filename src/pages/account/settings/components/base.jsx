@@ -8,19 +8,7 @@ import styles from './BaseView.less';
 const FormItem = Form.Item;
 const { Option } = Select; // 头像组件 方便以后独立，增加裁剪之类的功能
 //fix bug
-const AvatarView = ({ avatar }) => (
-  <Fragment>
-    <div className={styles.avatar_title}>头像</div>
-    <div className={styles.avatar}>
-      <img src={avatar} alt="avatar" />
-    </div>
-    <Upload fileList={[]}>
-      <div className={styles.button_view}>
-        <Button icon="upload" onClick={()=>{message.warning('抱歉,这个功能暂时用不了！')}}>更换头像</Button>
-      </div>
-    </Upload>
-  </Fragment>
-);
+
 
 const validatorGeographic = (_, value, callback) => {
   const { province, city } = value;
@@ -50,9 +38,10 @@ const validatorPhone = (rule, value, callback) => {
   callback();
 };
 
-@connect(({ user:{userInfo} }) => ({
+@connect(({ user:{userInfo},home }) => ({
   
-  userInfo
+  userInfo,
+  picture:home.picture
 }))
 class BaseView extends Component {
   view = undefined;
@@ -109,12 +98,48 @@ class BaseView extends Component {
       }
     });
   };
+  handleUpload = (file) => {
+   const {dispatch} = this.props
+  // const {file} = this.state
+    const formData = new FormData();
+    formData.append('file',file)
+    dispatch({
+      type:'accountSettings/upload',
+      payload:formData
+    })
 
+    // You can use any AJAX library you like
+    
+  };
   render() {
     const {
       form: { getFieldDecorator },
       userInfo,
+      picture
     } = this.props;
+    const props = {
+      beforeUpload: file => {
+        // this.setState(state => ({
+        //   file,
+        // }));
+        console.log('file1',file)
+        this.handleUpload(file)
+        return false;
+      }
+    };
+    const AvatarView = ({ avatar }) => (
+      <Fragment>
+        <div className={styles.avatar_title}>头像</div>
+        <div className={styles.avatar}>
+          <img src={avatar} alt="avatar" />
+        </div>
+        <Upload {...props} fileList={[]}>
+          <div className={styles.button_view}>
+            <Button icon="upload">更换头像</Button>
+          </div>
+        </Upload>
+      </Fragment>
+    );
     return (
       <div className={styles.baseView} ref={this.getViewDom}>
         <div className={styles.left}>
@@ -217,7 +242,7 @@ class BaseView extends Component {
           </Form>
         </div>
         <div className={styles.right}>
-          <AvatarView avatar={userInfo.sex===1?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} />
+          <AvatarView avatar={picture||userInfo.avatar} />
         </div>
       </div>
     );

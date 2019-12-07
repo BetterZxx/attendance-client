@@ -28,7 +28,7 @@ import Announcement from './components/Announcement'
 import styles from './style.less';
 const { confirm } = Modal;
 
-const PageHeaderContent = ({ currentUser }) => {
+const PageHeaderContent = ({ currentUser ,picture=''}) => {
   const loading = currentUser && Object.keys(currentUser).length;
 
   if (!loading) {
@@ -47,7 +47,7 @@ const greet = time<=5||time>=18?'晚上好':time<=11?'早安':'下午好'
   return (
     <div className={styles.pageHeaderContent}>
       <div className={styles.avatar}>
-        <Avatar size="large" src={currentUser.sex===1?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} />
+        <Avatar size="large" src={picture||currentUser.avatar} />
       </div>
       <div className={styles.content}>
         <div className={styles.contentTitle}>
@@ -72,7 +72,8 @@ const loadingMap = {
   userInfo,
   rankUsers,
   announcementData:announcement.data,
-  loading:home.loading
+  loading:home.loading,
+  picture:home.picture
 }))
 class Workplace extends Component {
   constructor(props) {
@@ -182,7 +183,7 @@ class Workplace extends Component {
           <Col span={6}>
             <List.Item.Meta
               style={{}}
-              avatar={<Avatar src={(Math.random()-0.5)>0?'http://118.24.95.11:5678/pig1.jpg':'http://118.24.95.11:5678/pig0.jpg'} />}
+              avatar={<Avatar src={item.avatar} />}
               title={
                 <span>
                   <a className={styles.username}>{item.name}</a>
@@ -299,7 +300,7 @@ class Workplace extends Component {
     this.props.history.push('/home/announcement/detail')
   }
   render() {
-    const { userInfo, rankUsers,announcementData,loading } = this.props;
+    const { userInfo, rankUsers,announcementData,loading,picture } = this.props;
     const { gradeStatus, punchStatus, curPage } = this.state;
     const publishedAnnounce = announcementData.filter(item=>item.status===1)
     let filterStudents = rankUsers
@@ -341,7 +342,7 @@ class Workplace extends Component {
     return (
       
         <PageHeaderWrapper
-        content={<PageHeaderContent currentUser={userInfo} />}
+        content={<PageHeaderContent currentUser={userInfo} picture={picture} />}
         extra={headStatus}
         extraContent={extraContent}
         breadcrumb={{

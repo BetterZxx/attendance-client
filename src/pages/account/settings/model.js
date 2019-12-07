@@ -1,4 +1,4 @@
-import { queryCity, queryCurrent, queryProvince, query as queryUsers,reqUpdateStuInfo } from './service';
+import { queryCity, queryCurrent, queryProvince, query as queryUsers,reqUpdateStuInfo,reqUploadImg } from './service';
 import { message } from 'antd';
 
 const Model = {
@@ -29,7 +29,18 @@ const Model = {
         message.error('更新基本信息失败')
       }
     },
-
+    *upload({payload},{call,put}){
+      const res = yield call(reqUploadImg,payload)
+      if(res.code===0){
+        message.success('更换头像成功！')
+        yield put({
+          type:'home/savePicture',
+          payload:res.data.url
+        })
+      }else{
+        message.error('更换头像失败！')
+      }
+    },
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
       yield put({
@@ -73,7 +84,9 @@ const Model = {
         },
       };
     },
-
+    savePicture(state,{payload}){
+      return {...state,picture:payload}
+    },
     setProvince(state, action) {
       return { ...state, province: action.payload };
     },
